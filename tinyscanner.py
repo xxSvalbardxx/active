@@ -39,7 +39,15 @@ def scan_udp_port(host, port, timeout=5):
     icmp_sock.bind(("", port))
     try:
         # Envoi d'un paquet UDP vers le port cible
-        udp_sock.sendto(b"", (host, port))  # Paquet UDP vide
+        udp_sock.sendto(b"hello", (host, port))  # Paquet UDP vide
+        
+        udp_response = select.select([udp_sock], [], [], timeout)
+        if udp_response[0]:
+            data, _ = udp_sock.recvfrom(1024)
+            #print(f"Port {port} UDP is open/filtered (received response)")
+            decoded_data = data.decode()
+            print(f"Data received from {port}: \n{decoded_data}")
+            return True
         
         start_time = time.time()
         while True:
@@ -47,15 +55,17 @@ def scan_udp_port(host, port, timeout=5):
             if current_time - start_time > timeout:
                 print(f"Port {port} UDP might be open/filtered (no ICMP response received)")
                 return True
-            
+                
             ready = select.select([icmp_sock], [], [], timeout)
             if ready[0]:
                 data, _ = icmp_sock.recvfrom(1024)
                 # Extraction du type ICMP et du code à partir du paquet (en supposant un en-tête IP de 20 octets)
                 icmp_type, icmp_code = struct.unpack_from("bb", data, 20)
+                
                 if icmp_type == 3 and icmp_code == 3:
                     #print(f"Port {port} UDP is closed (ICMP port unreachable received)")
                     return False
+                
             else:
                 # Timeout sans réponse ICMP
                 print(f"Port {port} UDP might be open/filtered (no ICMP response received)")

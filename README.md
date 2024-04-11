@@ -37,6 +37,16 @@ Scan d'une plage de ports UDP :
 ```sh
 sudo python3 tinyscanner.py -u 127.0.0.1 -p 1-1000
 ```
+### Option
+
+udp_server.py : Permet de lancer un serveur UDP pour tester le scan UDP.
+```sh
+# Lancer le serveur UDP
+python3 udp_server.py
+# Envoyer un message au serveur pour tester si il est ouvert avant de lancer le scan 
+echo -n "Hello, server!" | nc -4u -w1 127.0.0.1 8080
+```
+
 
 ### Remarques
 
@@ -44,3 +54,26 @@ sudo python3 tinyscanner.py -u 127.0.0.1 -p 1-1000
 - Les scans UDP ne peuvent pas toujours déterminer avec précision si un port est ouvert en raison de la nature sans connexion de l'UDP et du filtrage possible des paquets ICMP par des pare-feu.
 - Pour les scans UDP, un timeout de 5 secondes est utilisé pour les réponses ICMP. Vous pouvez ajuster ce délai en modifiant la variable `timeout` dans la fonction `scan_udp_port(host, port, timeout=5)` du script, ligne 34.
 - Les performances de ce script peuvent être améliorées en utilisant des threads pour les scans de ports multiples.
+
+
+## Exemples de Ports
+21 FTP
+22 SSH
+23 Telnet
+25 SMTP
+53 DNS
+80 HTTP
+110 POP3
+115 SFTP
+135 PRC
+139 NetBIOS
+143 IMAP
+194 CRI
+443 SSL
+445 SMB
+1433 MSSQL
+3306 mysql
+3389 Remote Desktop
+5632 PCAnywhere
+5900 VNC
+25565 Minecraft
